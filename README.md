@@ -1,3 +1,3 @@
 # ARender
 
-Simple softerware render
+Simple software render
