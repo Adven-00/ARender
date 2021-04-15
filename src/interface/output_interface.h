@@ -3,23 +3,35 @@
 #ifndef OUTPUT_INTERFACE_H_
 #define OUTPUT_INTERFACE_H_ 
 
+#include <svpng/svpng.h>
+
 #include <string>
 
 #include "../core/buffer.h"
-#include "../core/rasterizer.h"
 
-class OutputInterface {
+template<int w, int h>
+void SavePNG(std::string filename, FrameBuffer<w, h> frame_buffer) {
+    unsigned char *data  = new unsigned char[w * h * 4]; 
+    unsigned char *p = data;
 
-private:
-    FrameBuffer frame_buffer_;
+    FILE *fp;
+    if (fopen_s(&fp, (filename + ".png").c_str(), "wb")) {
+        return;
+    }
 
-public:
-    // shallow copy
-    OutputInterface(const FrameBuffer &frame_buffer);
-    OutputInterface(const Rasterizer &rasterizer);
+    for (int x = 0; x < w; x++) {
+        for (int y = 0; y < h; y++) {
+            *p++ = (unsigned char)frame_buffer[x][y].r;
+            *p++ = (unsigned char)frame_buffer[x][y].g;
+            *p++ = (unsigned char)frame_buffer[x][y].b;
+            *p++ = (unsigned char)frame_buffer[x][y].a;
+        }
+    }
 
-    void SetFrameBuffer(const FrameBuffer &frame_buffer_);
-    void SavePNG(std::string filename);
+    svpng(fp, w, h, data, 1);
+
+    delete[] data;
+    fclose(fp);
 };
 
 #endif // OUTPUT_INTERFACE_H_

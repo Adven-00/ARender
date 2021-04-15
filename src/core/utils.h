@@ -19,28 +19,32 @@ struct BoundingBox2D {
 using VertexIndex = int;
 using VertexPtr = std::shared_ptr<Vertex>;
 using VertexIndexList = std::map<VertexIndex, VertexPtr>;
-using Triangle = std::array<VertexIndex, 3>;
+using Triangle = std::array<VertexPtr, 3>;
 
 namespace utils {
+    
+    float TriangleSquare(Triangle tri);
 
-    float TriangleSquare(Triangle tri, VertexIndexList &list);
-
-    bool IsInTriangle(int x, int y, Triangle tri, VertexIndexList &list);
+    bool IsInTriangle(int x, int y, Triangle tri);
 
     // return 2D boundingbox of triangle
-    BoundingBox2D GetBoundingBox(Triangle tri, VertexIndexList &list);
+    BoundingBox2D GetBoundingBox(Triangle tri);
 
     // judge whether vertex.coord.csc is in clip space
-    bool InClipSpace(VertexIndex v, VertexIndexList &list);
+    bool InClipSpace(VertexPtr v);
 
     // interpolate vertex.shader_input_ for fragment shader
-    ShaderInput Interpolate(int x, int y, Triangle tri, VertexIndexList &list);
+    // tnterpolated depth will be written into output for depth test
+    ShaderInput Interpolate(std::array<float, 3> coeff, Triangle tri);
+
+    // get interpolate coefficent
+    std::array<float, 3> GetInterpolateCoeff(int x, int y, Triangle tri);
 
     // calculate vertex.coord.ndc
-    void HomogeneousDivision(VertexIndex v, VertexIndexList &list);
+    void HomogeneousDivision(VertexPtr v);
 
     // calculate vertex.coord.screen and vertex.coord.screen_int
-    void ViewPortTransformation(int width, int height, VertexIndex v, VertexIndexList &list);
+    void ViewPortTransformation(int width, int height, VertexPtr v);
 };
 
 #endif // UTILS_H_

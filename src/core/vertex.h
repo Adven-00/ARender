@@ -22,7 +22,7 @@ struct Coord {
     glm::vec4 csc;          // homogeneous clip space coordinates
     glm::vec3 ndc;          // normalized device coordinates
     glm::vec3 screen;       // screen coordinates (z == 0)
-    glm::vec3 screen_int;   // interger screen coordinates (z == 0)
+    glm::ivec3 screen_int;  // interger screen coordinates (z == 0)
 };
 
 struct Vertex {
