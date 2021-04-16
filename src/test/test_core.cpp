@@ -1,5 +1,4 @@
 #include "../core/rasterizer.h"
-#include "../interface/output_interface.h"
 
 #include <memory>
 
@@ -34,10 +33,16 @@ int main() {
                             {1, std::make_shared<Vertex>(b)},
                             {2, std::make_shared<Vertex>(c)}};
 
-    Rasterizer<100, 100> r;
+    const int w = 300;
+    const int h = 300;
+
+    Rasterizer r(w, h);
     r.SetVertexIndexList(list);
     r.DrawModel();
 
-    SavePNG("test_core", r.GetFrameBuffer());
+    auto frame_buffer_ = r.GetFrameBuffer();
+
+
+
     return 0;
 };

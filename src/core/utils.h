@@ -34,7 +34,7 @@ namespace utils {
     bool InClipSpace(VertexPtr v);
 
     // interpolate vertex.shader_input_ for fragment shader
-    // tnterpolated depth will be written into output for depth test
+    // interpolated depth will be written into output for depth test
     ShaderInput Interpolate(std::array<float, 3> coeff, Triangle tri);
 
     // get interpolate coefficent
