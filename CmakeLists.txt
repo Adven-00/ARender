@@ -2,27 +2,21 @@ project(ARender)
 
 cmake_minimum_required(VERSION 3.1)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
-
-file(GLOB_RECURSE CORE_SRC ${CMAKE_SOURCE_DIR}/src/core/*.cpp)
-file(GLOB_RECURSE PLATFORM_SRC ${CMAKE_SOURCE_DIR}/src/platform/*.cpp)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(TEST_DIR ${CMAKE_SOURCE_DIR}/src/test)
 set(CORE_DIR ${CMAKE_SOURCE_DIR}/src/core)
+#set(PIPELINE_DIR ${CMAKE_SOURCE_DIR}/src/pipeline)
+
+file(GLOB_RECURSE CORE_SRC ${CORE_DIR}/*.cpp)
+#file(GLOB_RECURSE PIPELINE_SRC ${PIPELINE_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME}
     ${CORE_SRC}
-    ${PLATFORM_SRC}
-    #${TEST_DIR}/test_output.cpp
-    ${TEST_DIR}/test_window.cpp
+    #${PIPELINE_SRC}
+    ${TEST_DIR}/test_core.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/include)
-target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/lib/SFML)
-
-target_link_libraries(${PROJECT_NAME} 
-    sfml-graphics
-    sfml-window
-    sfml-system
-)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)

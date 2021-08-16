@@ -1,13 +1,7 @@
-#pragma once
-
 #ifndef UTILS_H_
 #define UTILS_H_
 
 #include "vertex.h"
-
-#include <array>
-#include <map>
-#include <memory>
 
 struct BoundingBox2D {
     int x_min;
@@ -16,35 +10,33 @@ struct BoundingBox2D {
     int y_max;
 };
 
-using VertexIndex = int;
-using VertexPtr = std::shared_ptr<Vertex>;
-using VertexIndexList = std::map<VertexIndex, VertexPtr>;
-using Triangle = std::array<VertexPtr, 3>;
-
 namespace utils {
-    
-    float TriangleSquare(Triangle tri);
-
-    bool IsInTriangle(int x, int y, Triangle tri);
+    // square of screen triangle
+    float ScreenTriangleSquare(Triangle tri);
 
     // return 2D boundingbox of triangle
-    BoundingBox2D GetBoundingBox(Triangle tri);
+    BoundingBox2D BoundingBox(Triangle tri);
 
     // judge whether vertex.coord.csc is in clip space
-    bool InClipSpace(VertexPtr v);
+    bool InClipSpace(Vertex *v);
 
-    // interpolate vertex.shader_input_ for fragment shader
-    // interpolated depth will be written into output for depth test
-    ShaderInput Interpolate(std::array<float, 3> coeff, Triangle tri);
+    bool InTriangle(int x, int y, Triangle tri);
+
+    // interpolate vertex.attr for fragment shader
+    Attr Interpolate(std::array<float, 3> coeff, Triangle tri);
 
     // get interpolate coefficent
-    std::array<float, 3> GetInterpolateCoeff(int x, int y, Triangle tri);
+    std::array<float, 3> InterpolateCoeff(int x, int y, float s, Triangle tri);
 
     // calculate vertex.coord.ndc
-    void HomogeneousDivision(VertexPtr v);
+    void HomogeneousDivision(Vertex *v);
 
     // calculate vertex.coord.screen and vertex.coord.screen_int
-    void ViewPortTransformation(int width, int height, VertexPtr v);
+    void ViewPortTransform(int width, int height, Vertex *v);
+
+    // interpolate depth for depth test
+    float InterpolateDepth(std::array<float, 3> coeff, Triangle tri);
+
 };
 
 #endif // UTILS_H_

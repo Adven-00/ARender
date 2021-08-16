@@ -1,48 +1,34 @@
-#include "../core/rasterizer.h"
-
-#include <memory>
+#include "tool.h"
 
 int main() {
     glm::vec4 red(255.f, 0.f, 0.f, 255.f);
     glm::vec4 blue(0.f, 0.f, 255.f, 255.f);
-    glm::vec4 yellow(0.f, 255.f, 0.f, 255.f);
+    glm::vec4 green(0.f, 255.f, 0.f, 255.f);
+    glm::vec4 yellow(255.f, 255.f, 0.f, 255.f);
 
-    glm::vec4 pos_a(-0.5f, -0.5f, 0.1f, 1.f);
-    glm::vec4 pos_b(0.5f, -0.5f, 0.1f, 1.f);
-    glm::vec4 pos_c(0.f, 0.5f, 0.1f, 1.f);
+    glm::vec4 p_a(5.f, 5.f, -10.f, 1.f);
+    glm::vec4 p_b(-5.f, 5.f, -5.1f, 1.f);
+    glm::vec4 p_c(-5.f, -5.f, -10.f, 1.f);
+    glm::vec4 p_d(5.f, -5.f, -10.f, 1.f);
 
-    Vertex a;
-    ShaderInput shader_input_a;
-    shader_input_a.vec4_input["color"] = red;
-    a.coord.world = pos_a;
-    a.shader_input = shader_input_a;
+    Triangle tri_1 = MakeTriangle({p_a, p_b, p_c}, red);
+    Triangle tri_2 = MakeTriangle({p_d, p_c, p_a}, blue);
+    Triangle tri_3 = MakeTriangle({p_d, p_c, p_b}, green);
 
-    Vertex b;
-    ShaderInput shader_input_b;
-    shader_input_b.vec4_input["color"] = yellow;
-    b.coord.world = pos_b;
-    b.shader_input = shader_input_b;
+    const int w = 600;
+    const int h = 600;
 
-    Vertex c;
-    ShaderInput shader_input_c;
-    shader_input_c.vec4_input["color"] = blue;
-    c.coord.world = pos_c;
-    c.shader_input = shader_input_c;
+    Render r(w, h);
 
-    VertexIndexList list = {{0, std::make_shared<Vertex>(a)},
-                            {1, std::make_shared<Vertex>(b)},
-                            {2, std::make_shared<Vertex>(c)}};
+    Camera c;
+    Uniform u;
+    c.ChangeUniform(u);
+    r.SetUniform(u);
 
-    const int w = 300;
-    const int h = 300;
+    r.DrawTriangle(tri_1);
+    r.DrawTriangle(tri_2);
+    r.DrawTriangle(tri_3);
 
-    Rasterizer r(w, h);
-    r.SetVertexIndexList(list);
-    r.DrawModel();
-
-    auto frame_buffer_ = r.GetFrameBuffer();
-
-
-
+    SaveImage(w, h, 3, r.GetColorBuffer());
     return 0;
 };
