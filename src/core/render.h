@@ -2,8 +2,8 @@
 #define RENDER_H_  
 
 #include "utils.h"
-#include "buffer.h"
 #include "shader.h"
+#include "model.h"
 
 class Render {
 
@@ -23,14 +23,14 @@ public:
     Render(int width, int height);
     ~Render() = default;
 
-    ColorBuffer GetColorBuffer();
+    ColorBuffer Output();
 
-    void SetVertexShader(VertexShader &vertex_shader);
-    void SetFragmentShader(FragmentShader &fragement_shader);
+    void SetVertexShader(VertexShader vertex_shader);
+    void SetFragmentShader(FragmentShader fragement_shader);
     void SetUniform(Uniform &uniform);
 
     void DrawTriangle(Triangle tri);
-    //void DrawModel(Model &model);
+    void DrawModel(Model &model);
 };
 
 #endif // RENDER_H_

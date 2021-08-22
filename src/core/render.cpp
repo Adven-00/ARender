@@ -4,9 +4,13 @@ Render::Render(int width, int height)
     : width_(width),
       height_(height),
       depth_buffer_(width, height, DEPTH_BUFFER_DEFAULT),
-      color_buffer_(width, height, COLOR_BUFFER_DEFAULT),
-      vertex_shader_(DefaultVertexShader),
-      fragement_shader_(DefaultFragmentShader) {}
+      color_buffer_(width, height, COLOR_BUFFER_DEFAULT) {}
+
+void Render::DrawModel(Model &model) {
+    for (auto &t : model.Faces()) {
+        DrawTriangle(t);
+    }
+}
 
 void Render::DrawTriangle(Triangle tri) {
 
@@ -54,11 +58,11 @@ void Render::DrawTriangle(Triangle tri) {
     }
 }
 
-void Render::SetVertexShader(VertexShader &vertex_shader) {
+void Render::SetVertexShader(VertexShader vertex_shader) {
     vertex_shader_ = vertex_shader;
 }
 
-void Render::SetFragmentShader(FragmentShader &fragment_shader) {
+void Render::SetFragmentShader(FragmentShader fragment_shader) {
     fragement_shader_ = fragment_shader;
 }
 
@@ -66,6 +70,6 @@ void Render::SetUniform(Uniform &uniform) {
     uniform_ = uniform;
 }
 
-ColorBuffer Render::GetColorBuffer() {
+ColorBuffer Render::Output() {
     return color_buffer_;
 }
