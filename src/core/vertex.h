@@ -9,7 +9,7 @@
 #include <glm/ext.hpp>
 
 // vertex attributes
-// reserved key : "color", "uv", "norm"
+// reserved key : "color", "uv", "normal"
 struct Attr {
     std::map<std::string, glm::vec4> vec4_attr;
     std::map<std::string, glm::vec3> vec3_attr;

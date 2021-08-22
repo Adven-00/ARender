@@ -1,8 +1,9 @@
 #ifndef UNIFORM_H_
 #define UNIFORM_H_
 
-#include <glm/vec3.hpp>
-#include <glm/matrix.hpp>
+#include "texture.h"
+
+#include <glm/glm.hpp>
 
 class Uniform {
 public:
@@ -10,6 +11,8 @@ public:
     glm::mat4 view_mat;
     glm::mat4 proj_mat;
     glm::mat4 mvp_mat;
+
+    Texture texture;
 
 public:
     Uniform();

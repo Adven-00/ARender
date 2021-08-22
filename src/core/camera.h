@@ -6,7 +6,6 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/matrix.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 struct CameraPos {
     glm::vec3 eye_pos;
@@ -23,13 +22,13 @@ struct CameraField {
 
 constexpr float PI = 3.1415926f;
 
-constexpr CameraPos CAMERA_POS_DEFAULT = {
-    glm::vec3(0.f, 0.f, 0.f),
+constexpr CameraPos DEFAULT_CAMERA_POS = {
+    glm::vec3(0.f, 0.f, 5.f),
     glm::vec3(0.f, 0.f, -1.f),
     glm::vec3(0.f, 1.f, 0.f)
 };
 
-constexpr CameraField DEFAULT_CAMERA_FIELD = {0.5 * PI, 1.f, 0.01f, 500.f};
+constexpr CameraField DEFAULT_CAMERA_FIELD = {0.33f * PI, 1.f, 0.01f, 100.f};
 
 class Camera {
 protected:
@@ -37,12 +36,12 @@ protected:
     CameraField field_;
 
 public:
-    Camera(CameraPos pos = CAMERA_POS_DEFAULT, CameraField field = DEFAULT_CAMERA_FIELD);
+    Camera(CameraPos pos = DEFAULT_CAMERA_POS, CameraField field = DEFAULT_CAMERA_FIELD);
     ~Camera() = default;
 
-    void ChangeUniformViewMat(Uniform &uniform);
-    void ChangeUniformProjMat(Uniform &uniform);
-    void ChangeUniform(Uniform &uniform);
+    void AlterUniformViewMat(Uniform &uniform);
+    void AlterUniformProjMat(Uniform &uniform);
+    void AlterUniform(Uniform &uniform);
 };
 
 #endif // CAMERA_H_

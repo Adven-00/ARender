@@ -15,7 +15,9 @@ file(GLOB_RECURSE CORE_SRC ${CORE_DIR}/*.cpp)
 add_executable(${PROJECT_NAME}
     ${CORE_SRC}
     #${PIPELINE_SRC}
-    ${TEST_DIR}/test_core.cpp
+    #${TEST_DIR}/test_core.cpp
+    ${TEST_DIR}/test_model.cpp
+
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/3rdparty/include)
