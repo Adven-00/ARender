@@ -40,7 +40,7 @@ bool utils::InClipSpace(Vertex *v) {
     return true;
 }
 
-BoundingBox2D utils::BoundingBox(Triangle tri) {
+utils::BoundingBox2D utils::BoundingBox(Triangle tri) {
     BoundingBox2D bb;
     auto [a, b, c] = tri;
 
@@ -65,10 +65,10 @@ bool utils::InTriangle(int x, int y, Triangle tri) {
     glm::vec3 pb_pc = glm::cross(pb, pc);
     glm::vec3 pc_pa = glm::cross(pc, pa);
 
-    if (pa_pb.z >= 0 && pb_pc.z >= 0 && pc_pa.z >=0)
+    if (pa_pb.z >= 0 && pb_pc.z >= 0 && pc_pa.z >= 0)
         return true;
 
-    if (pa_pb.z <= 0 && pb_pc.z <= 0 && pc_pa.z <=0)
+    if (pa_pb.z <= 0 && pb_pc.z <= 0 && pc_pa.z <= 0)
         return true;
 
     return false;

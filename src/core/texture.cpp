@@ -31,7 +31,10 @@ glm::vec4 Texture::Color(float u, float v) {
     int yb = int(y);
     int yt = int(y) + 1;
 
-    auto xy_to_n = [=](int x, int y){return y * width_ + x;};
+    auto xy_to_n = [=](int x, int y) {
+        return y * width_ + x;
+    };
+    
     auto get_color = [=](int x, int y) {
         glm::vec4 c;
         c.r = data_[xy_to_n(x, y) * 4];

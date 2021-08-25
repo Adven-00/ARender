@@ -2,8 +2,8 @@
 #define BUFFER_H_  
 
 #include "vertex.h"
+#include "config.h"
 
-#include <glm/vec4.hpp>
 #include <vector>
 
 template<typename T>
@@ -22,23 +22,12 @@ public:
     Buffer() = default;
     ~Buffer() = default;
 
-    // for color/depth buffer
     void Set(int x, int y, T content);
     T Get(int x, int y);
-
-    // for vertex buffer
-    void Add(T content);
-    T Get(int n);
-    T *GetPointer(int n);
-    int Size();
 };
 
 using ColorBuffer = Buffer<glm::vec4>;
-using VertexBuffer = Buffer<Vertex>;
 using DepthBuffer = Buffer<float>;
-
-constexpr auto COLOR_BUFFER_DEFAULT = glm::vec4(0.f, 0.f, 0.f, 255.f);
-constexpr auto DEPTH_BUFFER_DEFAULT = -9999.f;
 
 // the origin is in the lower left corner of screen
 template<typename T>
@@ -58,28 +47,8 @@ void Buffer<T>::Set(int x, int y, T content) {
 }
 
 template<typename T>
-T Buffer<T>::Get(int n) {
-    return buffer_.at(n);
-}
-
-template<typename T>
-T *Buffer<T>::GetPointer(int n) {
-    return buffer_.data() + n;
-}
-
-template<typename T>
 T Buffer<T>::Get(int x, int y) {
     return buffer_[xy_to_n(x, y)];
-}
-
-template<typename T>
-void Buffer<T>::Add(T content) {
-    buffer_.push_back(content);
-}
-
-template<typename T>
-int Buffer<T>::Size() {
-    return int(buffer_.size());
 }
 
 #endif //BUFFER_H_h

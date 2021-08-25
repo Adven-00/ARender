@@ -3,6 +3,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tinyobjloader/tiny_obj_loader.h>
 
+
 Model::Model(std::string name) {
     name_ = name;
 }
@@ -11,10 +12,10 @@ void Model::LoadVertices() {
     tinyobj::ObjReader reader;
     tinyobj::ObjReaderConfig reader_config;
 
-    reader_config.mtl_search_path = DEFAULT_MODEL_PATH + name_;
-    reader_config.triangulate = true;
+    reader_config.mtl_search_path = config::model::Path + name_;
+    reader_config.triangulate = config::model::Triangulate;
 
-    reader.ParseFromFile(DEFAULT_MODEL_PATH + name_ + "/" + name_ + ".obj", reader_config);
+    reader.ParseFromFile(config::model::Path + name_ + "/" + name_ + ".obj", reader_config);
 
     auto &attrib = reader.GetAttrib();
     auto &shapes = reader.GetShapes();
@@ -22,16 +23,14 @@ void Model::LoadVertices() {
     for (size_t s = 0; s < shapes.size(); s++) {
 
         // loop over faces
-        size_t offset = 0;
         for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-            size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
 
             // loop over vertices in the face
-            for (size_t i = 0; i < fv; i++) {
+            for (size_t i = 0; i < 3; i++) {
                 Vertex v;
 
                 // access to vertex
-                tinyobj::index_t idx = shapes[s].mesh.indices[offset + i];
+                tinyobj::index_t idx = shapes[s].mesh.indices[f * 3 + i];
                 tinyobj::real_t vx = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
                 tinyobj::real_t vy = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
                 tinyobj::real_t vz = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
@@ -49,14 +48,11 @@ void Model::LoadVertices() {
                     tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
                     v.attr.vec2_attr["uv"] = glm::vec2(tx, ty);
                 }
-                vertex_buffer_.Add(v);
+                vertices_.push_back(v);
             }
-            offset += fv;           
+            auto pv = vertices_.data() + f * 3;
+            faces_.push_back({pv, pv + 1, pv + 2});         
         }
-    }
-    Vertex *pv = vertex_buffer_.GetPointer(0);
-    for (int i = 0; i < vertex_buffer_.Size() / 3; i++) {
-        faces_.push_back({pv + i, pv + i + 1, pv + i + 2});
     }
 }
 
@@ -65,7 +61,7 @@ std::vector<Triangle> Model::Faces() {
 }
 
 void Model::LoadTexture(std::string texture_name) {
-    auto texture_path = DEFAULT_MODEL_PATH + name_ + "/" + texture_name;
+    auto texture_path = config::model::Path + name_ + "/" + texture_name;
     texture_.Load(texture_path);
 }
 

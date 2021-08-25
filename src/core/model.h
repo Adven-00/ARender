@@ -2,25 +2,24 @@
 #define MODEL_H_
 
 #include "uniform.h"
-#include "buffer.h"
 #include "texture.h"
+#include "vertex.h"
+#include "config.h"
 
-#include <string>
 #include <vector>
-
-constexpr auto DEFAULT_MODEL_PATH = "../assets/model/";
 
 class Model {
 protected:
     std::string name_;
-
-    VertexBuffer vertex_buffer_;
+    std::vector<Vertex> vertices_;
     std::vector<Triangle> faces_;
     Texture texture_;
 
     // todo: model mat, material, multi-texture, multi-shape
 
 public:
+    // load model from folder config::model::path/[name]
+    // [name].obj will be loaded, but name of texture needs specified
     Model(std::string name);
 
     std::vector<Triangle> Faces();

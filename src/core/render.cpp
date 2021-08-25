@@ -3,8 +3,8 @@
 Render::Render(int width, int height) 
     : width_(width),
       height_(height),
-      depth_buffer_(width, height, DEPTH_BUFFER_DEFAULT),
-      color_buffer_(width, height, COLOR_BUFFER_DEFAULT) {}
+      depth_buffer_(width, height, config::buffer::Depth),
+      color_buffer_(width, height, config::buffer::Color) {}
 
 void Render::DrawModel(Model &model) {
     for (auto &t : model.Faces()) {
@@ -33,7 +33,7 @@ void Render::DrawTriangle(Triangle tri) {
     float s = utils::ScreenTriangleSquare(tri);    
     if (s == 0) return;
 
-    BoundingBox2D bb = utils::BoundingBox(tri);
+    utils::BoundingBox2D bb = utils::BoundingBox(tri);
 
     // every pixel of primitive
     for (int x = bb.x_min; x < bb.x_max; x++) {
