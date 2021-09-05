@@ -12,10 +12,6 @@
 #include <string>
 
 namespace config {
-    namespace buffer {
-        constexpr auto Color = glm::vec4(0.f, 0.f, 0.f, 255.f);
-        constexpr auto Depth = -9999.f;
-    };
 
     namespace camera {
         constexpr auto EyePos = glm::vec3(0.f, 0.f, 5.f);
@@ -29,10 +25,20 @@ namespace config {
     };
 
     namespace model {
-        constexpr auto Path = "../assets/model/";
-        
-        constexpr bool Triangulate = true;
+        constexpr auto MtlPath = "../assets/model/rock";
+        constexpr auto ObjPath = "../assets/model/rock/rock.obj";
+    };
+
+    namespace texture {
+        constexpr auto Path = "../assets/model/rock/rock.png";
+    };
+
+    namespace render {
+        constexpr auto Background = glm::vec4(0.f, 0.f, 0.f, 255.f);
+        constexpr auto MaxDepth = -1000.f;
+        constexpr auto Width = 500;
+        constexpr auto Height = 500;
     };
 };
 
-#endif
+#endif // CONFIG_H_

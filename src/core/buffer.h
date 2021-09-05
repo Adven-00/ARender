@@ -1,7 +1,6 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_  
 
-#include "vertex.h"
 #include "config.h"
 
 #include <vector>
@@ -15,35 +14,38 @@ private:
 
     std::vector<T> buffer_;
 
-    int xy_to_n(int x, int y);
+    // the origin is in the lower left corner of screen
+    int xy_to_n(int x, int y) { return y * width_ + x; }
 
 public:
-    Buffer(int width, int height, T content);
+    Buffer(int width, int height, const T &element);
+    Buffer(int width, int height, const T *data, size_t data_len);
     Buffer() = default;
     ~Buffer() = default;
 
-    void Set(int x, int y, T content);
+    void Set(int x, int y, const T &element);
     T Get(int x, int y);
+    T Get(float u, float v);
 };
 
 using ColorBuffer = Buffer<glm::vec4>;
 using DepthBuffer = Buffer<float>;
 
-// the origin is in the lower left corner of screen
 template<typename T>
-int Buffer<T>::xy_to_n(int x, int y) {
-    return y * width_ + x;
-}
-
-template<typename T>
-Buffer<T>::Buffer(int width, int height, T content) 
+Buffer<T>::Buffer(int width, int height, const T &element) 
     : width_(width), height_(height) {
-    buffer_.resize(width * height, content);
+    buffer_.resize(width * height, element);
 }
 
 template<typename T>
-void Buffer<T>::Set(int x, int y, T content) {
-    buffer_[xy_to_n(x, y)] = content;
+Buffer<T>::Buffer(int width, int height, const T *data, size_t data_len)
+    : width_(width), height_(height) {
+    buffer_.assign(data, data + data_len);
+}
+
+template<typename T>
+void Buffer<T>::Set(int x, int y, const T &element) {
+    buffer_[xy_to_n(x, y)] = element;
 }
 
 template<typename T>

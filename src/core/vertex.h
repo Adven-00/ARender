@@ -22,8 +22,8 @@ struct Coord {
     glm::vec4 world;        // homogeneous world coordinates (w = 1)
     glm::vec4 csc;          // homogeneous clip space coordinates
     glm::vec3 ndc;          // normalized device coordinates (w = 1)
-    glm::vec3 screen;       // screen coordinates (z = 0)
-    glm::ivec3 screen_int;  // interger screen coordinates (z = 0)
+    glm::vec2 screen;       // screen coordinates
+    glm::ivec2 screen_int;  // interger screen coordinates
 };
 
 struct Vertex {

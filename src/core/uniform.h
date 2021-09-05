@@ -3,7 +3,7 @@
 
 #include "texture.h"
 
-#include <glm/glm.hpp>
+#include <glm/matrix.hpp>
 
 class Uniform {
 public:
@@ -13,7 +13,6 @@ public:
     glm::mat4 mvp_mat;
 
     Texture texture;
-
 public:
     Uniform();
     void RefreshMvp();

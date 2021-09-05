@@ -1,12 +1,11 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include "uniform.h"
 #include "config.h"
 
 class Camera {
+    
 protected:
-
     glm::vec3 eye_pos_;
     glm::vec3 gaze_dir_;
     glm::vec3 up_dir_;
@@ -20,9 +19,9 @@ public:
     Camera();
     ~Camera() = default;
 
-    void AlterUniformViewMat(Uniform &uniform);
-    void AlterUniformProjMat(Uniform &uniform);
-    void AlterUniform(Uniform &uniform);
+    glm::mat4 GetViewMat();
+    glm::mat4 GetProjMat();
+    //glm::mat4 GetModelMat();
 };
 
 #endif // CAMERA_H_

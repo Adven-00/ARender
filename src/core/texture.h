@@ -1,23 +1,25 @@
 #ifndef TEXTURE_H_
 #define TEXTURE_H_
 
-#include "glm/vec4.hpp"
+#include "config.h"
 
 #include <string>
+#include <vector>
 
 class Texture {
 private:
+    std::string path_;
+
     int width_;
     int height_;
-    unsigned char *data_;
-
+    std::vector<unsigned char> map_;
+    //norm data
 public:
-    Texture();
-    Texture(std::string texture_path);
-    ~Texture();
+    Texture(std::string path = config::texture::Path);
 
+    //2d sampler
     glm::vec4 Color(float u, float v);
-    void Load(std::string texture_path);
+    void LoadMap();
 };
 
 #endif // TEXTURE_H_

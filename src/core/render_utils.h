@@ -11,24 +11,22 @@ namespace utils {
         int x_max;
         int y_max;
     };
-
+    
     // square of screen triangle
-    float ScreenTriangleSquare(Triangle tri);
+    float ScreenTriangleSquare(const Triangle &tri);
+
+    bool InTriangle(const std::array<float, 3> &bc);
 
     // return 2D boundingbox of triangle
-    BoundingBox2D BoundingBox(Triangle tri);
+    BoundingBox2D BoundingBox(const Triangle &tri);
 
     // judge whether vertex.coord.csc is in clip space
     bool InClipSpace(Vertex *v);
 
-    // judge whether vertex.coord.csc is in clip space
-    bool InTriangle(int x, int y, Triangle tri);
-
     // interpolate vertex.attr for fragment shader
-    Attr Interpolate(std::array<float, 3> coeff, Triangle tri);
+    Attr Interpolate(const std::array<float, 3> &coeff, const Triangle &tri);
 
-    // get interpolate coefficent
-    std::array<float, 3> InterpolateCoeff(int x, int y, float s, Triangle tri);
+    std::array<float, 3> PespectiveCorrection(const std::array<float, 3> &bc, const Triangle &tri);
 
     // calculate vertex.coord.ndc
     void HomogeneousDivision(Vertex *v);
@@ -37,8 +35,10 @@ namespace utils {
     void ViewPortTransform(int width, int height, Vertex *v);
 
     // interpolate depth for depth test
-    float InterpolateDepth(std::array<float, 3> coeff, Triangle tri);
+    float InterpolateDepth(const std::array<float, 3> &coeff, const Triangle &tri);
 
+    // calculate barycentric coordinate of (x, y) in tri
+    std::array<float, 3> BarycentricCoordinate(int x, int y, float s, const Triangle &tri);
 };
 
 #endif // UTILS_H_

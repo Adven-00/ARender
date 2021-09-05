@@ -4,32 +4,25 @@
 #include <stb/stb_image.h>
 #include <glm/gtx/compatibility.hpp>
 
-Texture::Texture() 
-    : width_(0), height_(0), data_(nullptr) {}
-
-Texture::~Texture() {
-    stbi_image_free(data_);
+Texture::Texture(std::string path) : path_(path) {
+    LoadMap();
 }
 
-Texture::Texture(std::string texture_path) {
-    int n;
+void Texture::LoadMap() {
+    int temp;
     stbi_set_flip_vertically_on_load(1);
-    data_ = stbi_load(texture_path.c_str(), &width_, &height_, &n, 4);
-}
-
-void Texture::Load(std::string texture_path) {
-    int n;
-    stbi_set_flip_vertically_on_load(1);
-    data_ = stbi_load(texture_path.c_str(), &width_, &height_, &n, 4);
+    unsigned char *map_data_ptr = stbi_load(path_.c_str(), &width_, &height_, &temp, 4);
+    map_.assign(map_data_ptr, map_data_ptr + width_ * height_ * 4);
+    stbi_image_free(map_data_ptr);
 }
 
 glm::vec4 Texture::Color(float u, float v) {
     float x = u * width_;
     float y = v * height_;
     int xl = int(x);
-    int xr = int(x) + 1;
     int yb = int(y);
-    int yt = int(y) + 1;
+    int xr = (xl == width_ - 1) ? xl : xl + 1;
+    int yt = (yb == height_ - 1) ? yb : yb + 1;
 
     auto xy_to_n = [=](int x, int y) {
         return y * width_ + x;
@@ -37,10 +30,10 @@ glm::vec4 Texture::Color(float u, float v) {
     
     auto get_color = [=](int x, int y) {
         glm::vec4 c;
-        c.r = data_[xy_to_n(x, y) * 4];
-        c.g = data_[xy_to_n(x, y) * 4 + 1];
-        c.b = data_[xy_to_n(x, y) * 4 + 2];
-        c.a = data_[xy_to_n(x, y) * 4 + 3];
+        c.r = map_[xy_to_n(x, y) * 4];
+        c.g = map_[xy_to_n(x, y) * 4 + 1];
+        c.b = map_[xy_to_n(x, y) * 4 + 2];
+        c.a = map_[xy_to_n(x, y) * 4 + 3];
         return c;
     };
 

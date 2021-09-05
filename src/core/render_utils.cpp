@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "render_utils.h"
 
 void utils::HomogeneousDivision(Vertex *v) {
     v->coord.ndc = v->coord.csc / v->coord.csc.w;
@@ -8,20 +8,18 @@ void utils::ViewPortTransform(int width, int height, Vertex *v) {
 
     v->coord.screen.x = (v->coord.ndc.x + 1.0f) * width * 0.5f;
     v->coord.screen.y = (v->coord.ndc.y + 1.0f) * height * 0.5f;
-    v->coord.screen.z = 0.f;
 
     v->coord.screen_int.x = int(v->coord.screen.x + 0.5f);
     v->coord.screen_int.y = int(v->coord.screen.y + 0.5f);
-    v->coord.screen_int.z = 0;
 }
 
-float utils::ScreenTriangleSquare(Triangle tri) {
+float utils::ScreenTriangleSquare(const Triangle &tri) {
     auto [a, b, c] = tri;
 
-    glm::vec3 ab = b->coord.screen - a->coord.screen;
-    glm::vec3 ac = c->coord.screen - a->coord.screen;
+    glm::vec2 ab = b->coord.screen - a->coord.screen;
+    glm::vec2 ac = c->coord.screen - a->coord.screen;
 
-    float s = glm::length(glm::cross(ab, ac));
+    float s = glm::abs(ab.x * ac.y - ab.y * ac.x);
     return s;
 }
 
@@ -40,7 +38,7 @@ bool utils::InClipSpace(Vertex *v) {
     return true;
 }
 
-utils::BoundingBox2D utils::BoundingBox(Triangle tri) {
+utils::BoundingBox2D utils::BoundingBox(const Triangle &tri) {
     BoundingBox2D bb;
     auto [a, b, c] = tri;
 
@@ -52,52 +50,33 @@ utils::BoundingBox2D utils::BoundingBox(Triangle tri) {
     return bb;
 }
 
-bool utils::InTriangle(int x, int y, Triangle tri) {
-    auto [a, b, c] = tri;
-
-    glm::vec3 p((float)x + 0.5f, (float)y + 0.5f, 0.f);
-
-    glm::vec3 pa = a->coord.screen - p;
-    glm::vec3 pb = b->coord.screen - p;
-    glm::vec3 pc = c->coord.screen - p;
-
-    glm::vec3 pa_pb = glm::cross(pa, pb);
-    glm::vec3 pb_pc = glm::cross(pb, pc);
-    glm::vec3 pc_pa = glm::cross(pc, pa);
-
-    if (pa_pb.z >= 0 && pb_pc.z >= 0 && pc_pa.z >= 0)
-        return true;
-
-    if (pa_pb.z <= 0 && pb_pc.z <= 0 && pc_pa.z <= 0)
-        return true;
-
-    return false;
+bool utils::InTriangle(const std::array<float, 3> &bc) {
+    auto [bc_a, bc_b, bc_c] = bc;
+    if ((bc_a > -FLT_EPSILON && bc_b > -FLT_EPSILON && bc_c > -FLT_EPSILON) ||
+        (bc_a < FLT_EPSILON && bc_b < FLT_EPSILON && bc_c < FLT_EPSILON)) {
+            return true;
+        } else {
+            return false;
+        }
 }
 
-std::array<float, 3> utils::InterpolateCoeff(int x, int y, float s, Triangle tri) {
+std::array<float, 3> utils::PespectiveCorrection(const std::array<float, 3> &bc, const Triangle &tri) {
     auto [a, b, c] = tri;
+    auto [bc_a, bc_b, bc_c] = bc;
+    
+    bc_a = glm::abs(bc_a);
+    bc_b = glm::abs(bc_b);
+    bc_c = glm::abs(bc_c);
 
-    glm::vec3 p((float)x + 0.5f, (float)y + 0.5f, 0.f);
+    float z = 1 / (bc_c / c->coord.csc.w + bc_a / a->coord.csc.w + bc_b / b->coord.csc.w);
+    auto i_a = bc_a * z / a->coord.csc.w;
+    auto i_b = bc_b * z / b->coord.csc.w;
+    auto i_c = bc_c * z / c->coord.csc.w;
 
-    glm::vec3 pa = a->coord.screen - p;
-    glm::vec3 pb = b->coord.screen - p;
-    glm::vec3 pc = c->coord.screen - p;
-
-    // barycentric coordonates
-    float bc_c = glm::length(glm::cross(pa, pb)) / s;
-    float bc_b = glm::length(glm::cross(pa, pc)) / s;
-    float bc_a = glm::length(glm::cross(pc, pb)) / s;
-
-    // perspective correction
-    float z = 1 / (bc_c / c->coord.world.z + bc_a / a->coord.world.z + bc_b / b->coord.world.z);
-    bc_a *= z / a->coord.world.z;
-    bc_b *= z / b->coord.world.z;
-    bc_c *= z / c->coord.world.z;
-
-    return {bc_a, bc_b, bc_c};
+    return {i_a, i_b, i_c};
 }
 
-Attr utils::Interpolate(std::array<float, 3> coeff, Triangle tri) {
+Attr utils::Interpolate(const std::array<float, 3> &coeff, const Triangle &tri) {
     Attr attr;
     auto [i_a, i_b, i_c] = coeff;
     auto [a, b, c] = tri;
@@ -137,9 +116,25 @@ Attr utils::Interpolate(std::array<float, 3> coeff, Triangle tri) {
     return attr;
 }
 
-float utils::InterpolateDepth(std::array<float, 3> coeff, Triangle tri) {
-    auto [bc_a, bc_b, bc_c] = coeff;
+float utils::InterpolateDepth(const std::array<float, 3> &coeff, const Triangle &tri) {
+    auto [i_a, i_b, i_c] = coeff;
     auto [a, b, c] = tri;
 
-    return 1 / (bc_a / a->coord.world.z + bc_b / b->coord.world.z + bc_c / c->coord.world.z);
+    return i_a * a->coord.world.z + i_b * b->coord.world.z + i_c * c->coord.world.z;
+}
+
+std::array<float, 3> utils::BarycentricCoordinate(int x, int y, float s, const Triangle &tri) {
+    auto [a, b, c] = tri;
+
+    glm::vec2 p((float)x + 0.5f, (float)y + 0.5f);
+
+    glm::vec2 pa = a->coord.screen - p;
+    glm::vec2 pb = b->coord.screen - p;
+    glm::vec2 pc = c->coord.screen - p;
+
+    float bc_c = (pb.x * pa.y - pb.y * pa.x) / s;
+    float bc_b = (pa.x * pc.y - pa.y * pc.x) / s;
+    float bc_a = (pc.x * pb.y - pc.y * pb.x) / s;
+
+    return {bc_a, bc_b, bc_c};
 }
