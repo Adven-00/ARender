@@ -5,17 +5,24 @@ Render::Render(int width, int height)
       height_(height),
       depth_buffer_(width, height, config::render::MaxDepth),
       color_buffer_(width, height, config::render::Background) {
-          RefreshUniform();
+          frame_data_ = new unsigned char[width_ * height_ * 4];
       }
 
 // Meyers' Singleton
-Render &Render::Instance(int width, int height) {
+Render *Render::Instance(int width, int height) {
     static Render instance(width, height);
-    return instance;
+    return &instance;
 }
 
-void Render::DrawModel(Model &model) {
-    for (auto &t : model.Faces()) {
+Render::~Render() {
+    delete[] frame_data_;
+}
+
+void Render::DrawModel() {
+    RefreshUniform();
+    RefreshBuffer();
+
+    for (auto &t : model_.Faces()) {
         DrawTriangle(t);
     }
 }
@@ -23,8 +30,7 @@ void Render::DrawModel(Model &model) {
 void Render::RefreshUniform() {
     uniform_.proj_mat = camera_.GetProjMat();
     uniform_.view_mat = camera_.GetViewMat();
-    // uniform_.view_mat = camera_.GetModelMat();
-    uniform_.RefreshMvp();
+    uniform_.mvp_mat = uniform_.proj_mat * uniform_.view_mat * uniform_.model_mat;
 }
 
 void Render::DrawTriangle(const Triangle &tri) {
@@ -74,14 +80,39 @@ void Render::DrawTriangle(const Triangle &tri) {
     }
 }
 
-void Render::SetVertexShader(const VertexShader &vertex_shader) {
-    vertex_shader_ = vertex_shader;
+void Render::SetVertexShader(const VertexShader &vs) {
+    vertex_shader_ = vs;
 }
 
-void Render::SetFragmentShader(const FragmentShader &fragment_shader) {
-    fragement_shader_ = fragment_shader;
+void Render::SetFragmentShader(const FragmentShader &fs) {
+    fragement_shader_ = fs;
 }
 
-ColorBuffer Render::Output() {
-    return color_buffer_;
+void Render::SetShader(const VertexShader &vs, const FragmentShader &fs) {
+    vertex_shader_ = vs;
+    fragement_shader_ = fs;
+}
+
+void Render::RefreshBuffer() {
+    color_buffer_.Reset(config::render::Background);
+    depth_buffer_.Reset(config::render::MaxDepth);
+}
+
+unsigned char *Render::GetFrameData() {
+    int index = 0;
+    int size = width_ * height_;
+
+    for (int i = 0; i < size; i++) {
+        auto pixel = color_buffer_.Get(i % width_, i / width_);
+        frame_data_[index++] = (unsigned char)pixel.r;
+        frame_data_[index++] = (unsigned char)pixel.g;
+        frame_data_[index++] = (unsigned char)pixel.b;
+        frame_data_[index++] = (unsigned char)pixel.a;
+    }
+
+    return frame_data_;
+}
+
+std::array<int, 2> Render::GetFrameSize() {
+    return {width_, height_};
 }

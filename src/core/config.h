@@ -14,30 +14,30 @@
 namespace config {
 
     namespace camera {
-        constexpr auto EyePos = glm::vec3(0.f, 0.f, 5.f);
-        constexpr auto GazeDir = glm::vec3(0.f, 0.f, -1.f);
-        constexpr auto UpDir = glm::vec3(0.f, 1.f, 0.f);  
+        inline auto EyePos = glm::vec3(0.f, 0.f, 5.f);
+        inline auto GazeDir = glm::vec3(0.f, 0.f, -1.f);
+        inline auto UpDir = glm::vec3(0.f, 1.f, 0.f);  
 
-        constexpr auto Fovy = 0.33f * 3.1415926f;
-        constexpr auto Aspect =  1.f;
-        constexpr auto ZNear =  0.01f;
-        constexpr auto ZFar  = 100.f;
+        inline auto Fovy = 0.33f * 3.1415926f;
+        inline auto Aspect =  1.f;
+        inline auto ZNear =  0.01f;
+        inline auto ZFar  = 100.f;
     };
 
     namespace model {
-        constexpr auto MtlPath = "../assets/model/rock";
-        constexpr auto ObjPath = "../assets/model/rock/rock.obj";
+        inline auto MtlPath = "../assets/model/cow";
+        inline auto ObjPath = "../assets/model/cow/cow.obj";
     };
 
     namespace texture {
-        constexpr auto Path = "../assets/model/rock/rock.png";
+        inline auto Path = "../assets/model/cow/cow.png";
     };
 
     namespace render {
-        constexpr auto Background = glm::vec4(0.f, 0.f, 0.f, 255.f);
-        constexpr auto MaxDepth = -1000.f;
-        constexpr auto Width = 500;
-        constexpr auto Height = 500;
+        inline auto Background = glm::vec4(0.f, 0.f, 0.f, 255.f);
+        inline auto MaxDepth = -1000.f;
+        inline auto Width = 500;
+        inline auto Height = 500;
     };
 };
 

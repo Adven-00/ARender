@@ -15,7 +15,6 @@ public:
     Texture texture;
 public:
     Uniform();
-    void RefreshMvp();
 };
 
 #endif // UNIFORM_H_

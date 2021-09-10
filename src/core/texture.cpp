@@ -12,7 +12,7 @@ void Texture::LoadMap() {
     int temp;
     stbi_set_flip_vertically_on_load(1);
     unsigned char *map_data_ptr = stbi_load(path_.c_str(), &width_, &height_, &temp, 4);
-    map_.assign(map_data_ptr, map_data_ptr + width_ * height_ * 4);
+    color_map_.assign(map_data_ptr, map_data_ptr + width_ * height_ * 4);
     stbi_image_free(map_data_ptr);
 }
 
@@ -30,10 +30,10 @@ glm::vec4 Texture::Color(float u, float v) {
     
     auto get_color = [=](int x, int y) {
         glm::vec4 c;
-        c.r = map_[xy_to_n(x, y) * 4];
-        c.g = map_[xy_to_n(x, y) * 4 + 1];
-        c.b = map_[xy_to_n(x, y) * 4 + 2];
-        c.a = map_[xy_to_n(x, y) * 4 + 3];
+        c.r = color_map_[xy_to_n(x, y) * 4];
+        c.g = color_map_[xy_to_n(x, y) * 4 + 1];
+        c.b = color_map_[xy_to_n(x, y) * 4 + 2];
+        c.a = color_map_[xy_to_n(x, y) * 4 + 3];
         return c;
     };
 

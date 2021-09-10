@@ -120,7 +120,7 @@ float utils::InterpolateDepth(const std::array<float, 3> &coeff, const Triangle 
     auto [i_a, i_b, i_c] = coeff;
     auto [a, b, c] = tri;
 
-    return i_a * a->coord.world.z + i_b * b->coord.world.z + i_c * c->coord.world.z;
+    return -i_a * a->coord.csc.w - i_b * b->coord.csc.w - i_c * c->coord.csc.w;
 }
 
 std::array<float, 3> utils::BarycentricCoordinate(int x, int y, float s, const Triangle &tri) {

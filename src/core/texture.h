@@ -12,7 +12,7 @@ private:
 
     int width_;
     int height_;
-    std::vector<unsigned char> map_;
+    std::vector<unsigned char> color_map_;
     //norm data
 public:
     Texture(std::string path = config::texture::Path);
